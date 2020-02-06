@@ -2,10 +2,6 @@
  * Copyright 2020 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
  */
 import com.icerockdev.service.auth.revoke.*
-import com.icerockdev.service.auth.revoke.rolebased.IRevokeTokenService
-import com.icerockdev.service.auth.revoke.rolebased.RevokeTokenService
-import com.icerockdev.service.auth.revoke.rolebased.RevokeAtDto
-import com.icerockdev.service.auth.revoke.rolebased.UserKey
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -17,16 +13,16 @@ class RevokeRoleTest {
     }
 
 
-    class TokenRepository : ITokenDataRepository<UserKey, RevokeAtDto> {
+    class TokenRepository : ITokenDataRepository<UserKey> {
 
-        override suspend fun getAllNotExpired(): Map<UserKey, RevokeAtDto> {
+        override suspend fun getAllNotExpired(): Map<UserKey, Long> {
             return mapOf(
-                UserKey(1, 1) to RevokeAtDto(1, now - 10 * 1000L, 1),
-                UserKey(2, 2) to RevokeAtDto(2, now - TOKEN_TTL, 2)
+                UserKey(1, 1) to now - 10 * 1000L,
+                UserKey(2, 2) to now - TOKEN_TTL
             )
         }
 
-        override fun insertOrUpdate(value: RevokeAtDto): Boolean {
+        override fun insertOrUpdate(key: UserKey, revokeAt: Long): Boolean {
             return true
         }
 
@@ -37,8 +33,8 @@ class RevokeRoleTest {
 
     @Test
     fun testTtl() {
-        val notifier = TokenNotifyBus<RevokeAtDto>()
-        val service: IRevokeTokenService = RevokeTokenService(
+        val notifier = TokenNotifyBus<UserKey>()
+        val service: IRevokeTokenService<UserKey> = RevokeTokenService(
             TokenRepository()
         ) {
             this.tokenTtl = TOKEN_TTL
@@ -48,18 +44,18 @@ class RevokeRoleTest {
         // await cache loading
         Thread.sleep(1000)
 
-        assertTrue { service.checkIsActive(1, 1, now) }
-        assertTrue { service.checkIsActive(1, 1,now - 1 * 1000L) }
-        assertFalse { service.checkIsActive(1, 1,now - TOKEN_TTL + 1000L) }
-        assertFalse { service.checkIsActive(1, 1,now - TOKEN_TTL - 1000L) }
+        assertTrue { service.checkIsActive(UserKey(1, 1), now) }
+        assertTrue { service.checkIsActive(UserKey(1, 1),now - 1 * 1000L) }
+        assertFalse { service.checkIsActive(UserKey(1, 1),now - TOKEN_TTL + 1000L) }
+        assertFalse { service.checkIsActive(UserKey(1, 1),now - TOKEN_TTL - 1000L) }
 
-        assertTrue { service.checkIsActive(2, 2,now - TOKEN_TTL) }
+        assertTrue { service.checkIsActive(UserKey(2, 2),now - TOKEN_TTL) }
 
-        assertTrue { service.checkIsActive(3, 2, now) }
+        assertTrue { service.checkIsActive(UserKey(3, 2), now) }
 
-        notifier.sendEvent(RevokeAtDto(4, now, 2))
+        notifier.sendEvent(UserKey(4, 2), now)
 
-        assertFalse { service.checkIsActive(4, 2,now - 1) }
-        assertTrue { service.checkIsActive(4, 2, now + 1) }
+        assertFalse { service.checkIsActive(UserKey(4, 2),now - 1) }
+        assertTrue { service.checkIsActive(UserKey(4, 2), now + 1) }
     }
 }

@@ -6,7 +6,7 @@ package com.icerockdev.sample.simple
 
 import com.auth0.jwt.JWTVerifier
 import com.icerockdev.service.auth.acl.*
-import com.icerockdev.service.auth.revoke.simple.IRevokeTokenService
+import com.icerockdev.service.auth.revoke.IRevokeTokenService
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.auth.Authentication
@@ -17,7 +17,7 @@ import io.ktor.auth.jwt.jwt
 fun Application.installAuth(
     verifier: JWTVerifier,
     audience: String,
-    revokeTokenService: IRevokeTokenService
+    revokeTokenService: IRevokeTokenService<Int>
 ) {
 
     fun JWTAuthenticationProvider.Configuration.accessVerify(

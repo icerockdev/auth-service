@@ -8,10 +8,6 @@ import com.icerockdev.sample.simple.TOKEN_TTL
 import com.icerockdev.service.auth.jwt.JwtConfig
 import com.icerockdev.service.auth.jwt.JwtTokenGenerator
 import com.icerockdev.service.auth.revoke.*
-import com.icerockdev.service.auth.revoke.rolebased.IRevokeTokenService
-import com.icerockdev.service.auth.revoke.rolebased.RevokeAtDto
-import com.icerockdev.service.auth.revoke.rolebased.RevokeTokenService
-import com.icerockdev.service.auth.revoke.rolebased.UserKey
 import io.ktor.application.ApplicationCallPipeline
 import io.ktor.application.call
 import io.ktor.application.install
@@ -48,8 +44,8 @@ object RoleBased {
         println("token:")
         println(tokens.accessToken)
 
-        val notifier = TokenNotifyBus<RevokeAtDto>()
-        val revokeTokenService: IRevokeTokenService = RevokeTokenService(
+        val notifier = TokenNotifyBus<UserKey>()
+        val revokeTokenService: IRevokeTokenService<UserKey> = RevokeTokenService(
             TokenRepository()
         ) {
             this.tokenTtl = TOKEN_TTL
@@ -104,15 +100,15 @@ object RoleBased {
 
 const val AUDIENCE = "audience-rolebased"
 
-class TokenRepository : ITokenDataRepository<UserKey, RevokeAtDto> {
+class TokenRepository : ITokenDataRepository<UserKey> {
 
-    override suspend fun getAllNotExpired(): Map<UserKey, RevokeAtDto> {
+    override suspend fun getAllNotExpired(): Map<UserKey, Long> {
         return mapOf(
-            UserKey(2, 1) to RevokeAtDto(2, System.currentTimeMillis() - TOKEN_TTL, 1)
+            UserKey(2, 1) to System.currentTimeMillis() - TOKEN_TTL
         )
     }
 
-    override fun insertOrUpdate(value: RevokeAtDto): Boolean {
+    override fun insertOrUpdate(key: UserKey, revokeAt: Long): Boolean {
         return true
     }
 

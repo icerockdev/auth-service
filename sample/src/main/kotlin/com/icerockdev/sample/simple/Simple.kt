@@ -7,8 +7,8 @@ package com.icerockdev.sample.simple
 import com.icerockdev.service.auth.jwt.JwtConfig
 import com.icerockdev.service.auth.jwt.JwtTokenGenerator
 import com.icerockdev.service.auth.revoke.*
-import com.icerockdev.service.auth.revoke.simple.IRevokeTokenService
-import com.icerockdev.service.auth.revoke.simple.RevokeTokenService
+import com.icerockdev.service.auth.revoke.IRevokeTokenService
+import com.icerockdev.service.auth.revoke.RevokeTokenService
 import io.ktor.application.ApplicationCallPipeline
 import io.ktor.application.call
 import io.ktor.application.install
@@ -47,13 +47,14 @@ object Simple {
         println("token:")
         println(tokens.accessToken)
 
-        val notifier = TokenNotifyBus<RevokeAtDto>()
-        val revokeTokenService: IRevokeTokenService = RevokeTokenService(
-            TokenRepository()
-        ) {
-            this.tokenTtl = TOKEN_TTL
-            this.notifier = notifier
-        }
+        val notifier = TokenNotifyBus<Int>()
+        val revokeTokenService: IRevokeTokenService<Int> =
+            RevokeTokenService(
+                TokenRepository()
+            ) {
+                this.tokenTtl = TOKEN_TTL
+                this.notifier = notifier
+            }
 
         val env = applicationEngineEnvironment {
             this.log = logger
@@ -103,15 +104,15 @@ object Simple {
 
 const val AUDIENCE = "audience-simple"
 
-class TokenRepository : ITokenDataRepository<Int, RevokeAtDto> {
+class TokenRepository : ITokenDataRepository<Int> {
 
-    override suspend fun getAllNotExpired(): Map<Int, RevokeAtDto> {
+    override suspend fun getAllNotExpired(): Map<Int, Long> {
         return mapOf(
-            2 to RevokeAtDto(2, System.currentTimeMillis() - TOKEN_TTL)
+            2 to System.currentTimeMillis() - TOKEN_TTL
         )
     }
 
-    override fun insertOrUpdate(value: RevokeAtDto): Boolean {
+    override fun insertOrUpdate(key: Int, revokeAt: Long): Boolean {
         return true
     }
 
