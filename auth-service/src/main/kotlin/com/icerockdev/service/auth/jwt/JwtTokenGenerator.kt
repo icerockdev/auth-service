@@ -24,7 +24,7 @@ class JwtTokenGenerator(private val config: JwtConfig) {
         .withIssuer(config.issuer)
         .build()
 
-    fun makeTokens(userId: Int, userRole: Int? = null): JwtTokens {
+    fun makeTokens(userId: Int, userRole: Int? = null, userType: Int? = null): JwtTokens {
         val currentTimeMillis: Long = System.currentTimeMillis()
         val accessTokenExpiredAt: Long = currentTimeMillis + (config.accessTokenTtl * TTL_MULTIPLIER)
         val refreshTokenExpiredAt: Long = currentTimeMillis + (config.refreshTokenTtl * TTL_MULTIPLIER)
@@ -42,6 +42,10 @@ class JwtTokenGenerator(private val config: JwtConfig) {
             accessToken.withClaim("role", userRole)
         }
 
+        userType?.let {
+            accessToken.withClaim("userType", userType)
+        }
+
         val refreshToken = JWT.create()
             .withSubject("Authentication")
             .withIssuer(config.issuer)
@@ -53,6 +57,10 @@ class JwtTokenGenerator(private val config: JwtConfig) {
 
         userRole?.let {
             refreshToken.withClaim("role", userRole)
+        }
+
+        userType?.let {
+            refreshToken.withClaim("userType", userType)
         }
 
         return JwtTokens(

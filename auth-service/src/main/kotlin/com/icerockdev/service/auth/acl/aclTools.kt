@@ -41,15 +41,15 @@ fun JWTCredential.revokeValidate(revokeTokenService: IRevokeTokenService<Int>, u
 fun JWTCredential.revokeValidate(
     revokeTokenService: IRevokeTokenService<UserKey>,
     userIdClaim: String = "id",
-    roleClaim: String = "role"
+    userTypeClaim: String = "userType"
 ): Boolean {
     val userId = payload.getClaim(userIdClaim).asInt()
-    val roleId = payload.getClaim(roleClaim).asInt()
-    if (payload.issuedAt === null || userId === null || roleId === null) {
+    val userType = payload.getClaim(userTypeClaim).asInt()
+    if (payload.issuedAt === null || userId === null || userType === null) {
         return false
     }
 
-    return revokeTokenService.checkIsActive(UserKey(userId, roleId), payload.issuedAt.time)
+    return revokeTokenService.checkIsActive(UserKey(userId, userType), payload.issuedAt.time)
 }
 
 fun JWTCredential.checkIsAccessToken(typeClaim: String = "type"): Boolean {
