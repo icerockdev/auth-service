@@ -5,7 +5,8 @@
 package com.icerockdev.service.auth.acl
 
 import com.icerockdev.service.auth.jwt.TokenTypes
-import com.icerockdev.service.auth.revoke.IRevokeTokenService
+import com.icerockdev.service.auth.revoke.simple.IRevokeTokenService
+import com.icerockdev.service.auth.revoke.rolebased.IRevokeTokenService as RoleBasedIRevokeTokenService
 import io.ktor.auth.jwt.JWTCredential
 
 fun JWTCredential.intRoleValidate(roleListAccess: List<Int>, roleClaim: String = "role"): Boolean {
@@ -35,6 +36,20 @@ fun JWTCredential.revokeValidate(revokeTokenService: IRevokeTokenService, userId
     }
 
     return revokeTokenService.checkIsActive(userId, payload.issuedAt.time)
+}
+
+fun JWTCredential.revokeValidate(
+    revokeTokenService: RoleBasedIRevokeTokenService,
+    userIdClaim: String = "id",
+    roleIdClaim: String = "roleId"
+): Boolean {
+    val userId = payload.getClaim(userIdClaim).asInt()
+    val roleId = payload.getClaim(roleIdClaim).asInt()
+    if (payload.issuedAt === null || userId === null || roleId === null) {
+        return false
+    }
+
+    return revokeTokenService.checkIsActive(userId, roleId, payload.issuedAt.time)
 }
 
 fun JWTCredential.checkIsAccessToken(typeClaim: String = "type"): Boolean {

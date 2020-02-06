@@ -2,13 +2,16 @@
  * Copyright 2020 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
  */
 
-package com.icerockdev.service.auth.revoke
+package com.icerockdev.service.auth.revoke.simple
 
 import com.icerockdev.service.auth.cache.IMemoryCacheHook
 import com.icerockdev.service.auth.cache.InMemoryCache
+import com.icerockdev.service.auth.revoke.ITokenDataRepository
+import com.icerockdev.service.auth.revoke.RevokeAtDto
+import com.icerockdev.service.auth.revoke.TokenNotifyBus
 
 class RevokeTokenService(
-    private val repository: ITokenDataRepository,
+    private val repository: ITokenDataRepository<RevokeAtDto>,
     configure: Configuration.() -> Unit = {}
 ) : IRevokeTokenService {
 
@@ -18,13 +21,14 @@ class RevokeTokenService(
          */
         var tokenTtl: Long = 3600 * 1000L
         var cacheCapacity: Int = 10000
-        var notifier: TokenNotifyBus? = null
+        var notifier: TokenNotifyBus<RevokeAtDto>? = null
     }
 
     private val cache: InMemoryCache<Int, RevokeAtDto>
 
     init {
-        val configuration = Configuration()
+        val configuration =
+            Configuration()
         configuration.configure()
 
         cache = InMemoryCache(
@@ -64,7 +68,7 @@ class RevokeTokenService(
     override fun putRevoked(userId: Int, revokeAt: Long): Boolean {
         val dto = RevokeAtDto(userId, revokeAt)
         if (cache.put(userId, dto)) {
-            return repository.insertOrUpdate(userId, dto)
+            return repository.insertOrUpdate(dto)
         }
         return false
     }

@@ -4,7 +4,7 @@
 
 package com.icerockdev.service.auth.revoke
 
-data class RevokeAtDto (
-    var userId: Int,
-    var revokeAt: Long
+open class RevokeAtDto (
+    val userId: Int,
+    val revokeAt: Long
 )
