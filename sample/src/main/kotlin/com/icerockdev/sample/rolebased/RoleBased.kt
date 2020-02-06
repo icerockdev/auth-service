@@ -23,13 +23,14 @@ import io.ktor.server.engine.applicationEngineEnvironment
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.netty.NettyApplicationEngine
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 
 object RoleBased {
     private val logger = LoggerFactory.getLogger(RoleBased::class.java)
 
-    fun main(args: Array<String>) {
+    fun main(args: Array<String>): NettyApplicationEngine {
         val jwtTokenGenerator = JwtTokenGenerator(
             JwtConfig(
                 secret = "secret",
@@ -88,13 +89,11 @@ object RoleBased {
             }
             // Public API
             connector {
-                this.port = 8080
+                this.port = 8083
             }
         }
 
-        val server = embeddedServer(Netty, env)
-
-        server.start(wait = true)
+        return embeddedServer(Netty, env)
     }
 }
 

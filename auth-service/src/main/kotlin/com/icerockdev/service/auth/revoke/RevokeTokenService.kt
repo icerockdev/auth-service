@@ -7,11 +7,6 @@ package com.icerockdev.service.auth.revoke
 import com.icerockdev.service.auth.cache.IMemoryCacheHook
 import com.icerockdev.service.auth.cache.InMemoryCache
 
-data class UserKey (
-    val userId: Int,
-    val roleId: Int
-)
-
 class RevokeTokenService<T : Any>(
     private val repository: ITokenDataRepository<T>,
     configure: Configuration<T>.() -> Unit = {}

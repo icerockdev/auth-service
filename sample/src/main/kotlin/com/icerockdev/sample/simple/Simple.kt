@@ -24,6 +24,7 @@ import io.ktor.server.engine.applicationEngineEnvironment
 import io.ktor.server.engine.connector
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
+import io.ktor.server.netty.NettyApplicationEngine
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 
@@ -32,7 +33,7 @@ const val TOKEN_TTL: Long = 3600 * 1000L
 object Simple {
     private val logger = LoggerFactory.getLogger(Simple::class.java)
 
-    fun main(args: Array<String>) {
+    fun main(args: Array<String>): NettyApplicationEngine {
         val jwtTokenGenerator = JwtTokenGenerator(
             JwtConfig(
                 secret = "secret",
@@ -92,13 +93,11 @@ object Simple {
             }
             // Public API
             connector {
-                this.port = 8080
+                this.port = 8082
             }
         }
 
-        val server = embeddedServer(Netty, env)
-
-        server.start(wait = true)
+        return embeddedServer(Netty, env)
     }
 }
 

@@ -7,7 +7,7 @@ object Main {
 
     @JvmStatic
     fun main(args: Array<String>) {
-        RoleBased.main(args)
-        Simple.main(args)
+        RoleBased.main(args).start()
+        Simple.main(args).start(wait = true)
     }
 }
