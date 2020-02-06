@@ -41,10 +41,10 @@ fun JWTCredential.revokeValidate(revokeTokenService: IRevokeTokenService, userId
 fun JWTCredential.revokeValidate(
     revokeTokenService: RoleBasedIRevokeTokenService,
     userIdClaim: String = "id",
-    roleIdClaim: String = "roleId"
+    roleClaim: String = "role"
 ): Boolean {
     val userId = payload.getClaim(userIdClaim).asInt()
-    val roleId = payload.getClaim(roleIdClaim).asInt()
+    val roleId = payload.getClaim(roleClaim).asInt()
     if (payload.issuedAt === null || userId === null || roleId === null) {
         return false
     }
