@@ -4,8 +4,8 @@
 
 package com.icerockdev.service.auth.revoke
 
-interface IRevokeTokenService {
-    fun checkIsActive(userId: Int, issuedAt: Long): Boolean
-    fun putRevoked(userId: Int, revokeAt: Long): Boolean
-    fun getAll(): List<RevokeAtDto>
+interface IRevokeTokenService<T: Any> {
+    fun checkIsActive(key: T, issuedAt: Long): Boolean
+    fun putRevoked(key: T, revokeAt: Long): Boolean
+    fun getAll(): List<Long>
 }

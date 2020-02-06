@@ -4,16 +4,16 @@
 
 package com.icerockdev.service.auth.revoke
 
-class TokenNotifyBus {
-    private val subscribeList = ArrayList<(RevokeAtDto) -> Boolean>()
+class TokenNotifyBus<T: Any> {
+    private val subscribeList = ArrayList<(T, Long) -> Boolean>()
 
-    fun subscribe(block: (RevokeAtDto) -> Boolean) {
+    fun subscribe(block: (key: T, Long) -> Boolean) {
         subscribeList.add(block)
     }
 
-    fun sendEvent(value: RevokeAtDto) {
+    fun sendEvent(key: T, value: Long) {
         subscribeList.forEach { block ->
-            block(value)
+            block(key, value)
         }
     }
 }

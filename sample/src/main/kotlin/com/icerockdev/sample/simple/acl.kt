@@ -2,7 +2,7 @@
  * Copyright 2020 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
  */
 
-package com.icerockdev.sample
+package com.icerockdev.sample.simple
 
 import com.auth0.jwt.JWTVerifier
 import com.icerockdev.service.auth.acl.*
@@ -17,7 +17,7 @@ import io.ktor.auth.jwt.jwt
 fun Application.installAuth(
     verifier: JWTVerifier,
     audience: String,
-    revokeTokenService: IRevokeTokenService
+    revokeTokenService: IRevokeTokenService<Int>
 ) {
 
     fun JWTAuthenticationProvider.Configuration.accessVerify(
