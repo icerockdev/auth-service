@@ -5,6 +5,7 @@ import com.icerockdev.service.auth.revoke.*
 import com.icerockdev.service.auth.revoke.rolebased.IRevokeTokenService
 import com.icerockdev.service.auth.revoke.rolebased.RevokeTokenService
 import com.icerockdev.service.auth.revoke.rolebased.RevokeAtDto
+import com.icerockdev.service.auth.revoke.rolebased.UserKey
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -16,13 +17,12 @@ class RevokeRoleTest {
     }
 
 
-    class TokenRepository : ITokenDataRepository<RevokeAtDto> {
+    class TokenRepository : ITokenDataRepository<UserKey, RevokeAtDto> {
 
-
-        override suspend fun getAllNotExpired(): Map<Int, RevokeAtDto> {
+        override suspend fun getAllNotExpired(): Map<UserKey, RevokeAtDto> {
             return mapOf(
-                1 to RevokeAtDto(1, now - 10 * 1000L, 1),
-                2 to RevokeAtDto(2, now - TOKEN_TTL, 2)
+                UserKey(1, 1) to RevokeAtDto(1, now - 10 * 1000L, 1),
+                UserKey(2, 2) to RevokeAtDto(2, now - TOKEN_TTL, 2)
             )
         }
 
@@ -33,7 +33,6 @@ class RevokeRoleTest {
         override fun cleanUp() {
 
         }
-
     }
 
     @Test

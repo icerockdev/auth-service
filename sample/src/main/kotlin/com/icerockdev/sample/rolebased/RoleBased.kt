@@ -11,6 +11,7 @@ import com.icerockdev.service.auth.revoke.*
 import com.icerockdev.service.auth.revoke.rolebased.IRevokeTokenService
 import com.icerockdev.service.auth.revoke.rolebased.RevokeAtDto
 import com.icerockdev.service.auth.revoke.rolebased.RevokeTokenService
+import com.icerockdev.service.auth.revoke.rolebased.UserKey
 import io.ktor.application.ApplicationCallPipeline
 import io.ktor.application.call
 import io.ktor.application.install
@@ -103,11 +104,11 @@ object RoleBased {
 
 const val AUDIENCE = "audience-rolebased"
 
-class TokenRepository : ITokenDataRepository<RevokeAtDto> {
+class TokenRepository : ITokenDataRepository<UserKey, RevokeAtDto> {
 
-    override suspend fun getAllNotExpired(): Map<Int, RevokeAtDto> {
+    override suspend fun getAllNotExpired(): Map<UserKey, RevokeAtDto> {
         return mapOf(
-            2 to RevokeAtDto(2, System.currentTimeMillis() - TOKEN_TTL, 1)
+            UserKey(2, 1) to RevokeAtDto(2, System.currentTimeMillis() - TOKEN_TTL, 1)
         )
     }
 

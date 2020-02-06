@@ -9,8 +9,13 @@ import com.icerockdev.service.auth.cache.InMemoryCache
 import com.icerockdev.service.auth.revoke.ITokenDataRepository
 import com.icerockdev.service.auth.revoke.TokenNotifyBus
 
+data class UserKey (
+    val userId: Int,
+    val roleId: Int
+)
+
 class RevokeTokenService(
-    private val repository: ITokenDataRepository<RevokeAtDto>,
+    private val repository: ITokenDataRepository<UserKey, RevokeAtDto>,
     configure: Configuration.() -> Unit = {}
 ) : IRevokeTokenService {
 
@@ -23,7 +28,7 @@ class RevokeTokenService(
         var notifier: TokenNotifyBus<RevokeAtDto>? = null
     }
 
-    private val cache: InMemoryCache<Int, RevokeAtDto>
+    private val cache: InMemoryCache<UserKey, RevokeAtDto>
 
     init {
         val configuration = Configuration()
@@ -31,12 +36,12 @@ class RevokeTokenService(
 
         cache = InMemoryCache(
             capacity = configuration.cacheCapacity,
-            hook = object : IMemoryCacheHook<Int, RevokeAtDto> {
-                override suspend fun loader(): Map<Int, RevokeAtDto> {
+            hook = object : IMemoryCacheHook<UserKey, RevokeAtDto> {
+                override suspend fun loader(): Map<UserKey, RevokeAtDto> {
                     return repository.getAllNotExpired()
                 }
 
-                override fun isExpired(now: Long, key: Int, value: RevokeAtDto): Boolean {
+                override fun isExpired(now: Long, key: UserKey, value: RevokeAtDto): Boolean {
                     return value.revokeAt < now - configuration.tokenTtl
                 }
 
@@ -49,13 +54,13 @@ class RevokeTokenService(
         val notifier = configuration.notifier
         if (notifier !== null) {
             notifier.subscribe { dto ->
-                return@subscribe cache.put(dto.userId, dto)
+                return@subscribe cache.put(UserKey(dto.userId, dto.roleId), dto)
             }
         }
     }
 
     override fun checkIsActive(userId: Int, roleId: Int, issuedAt: Long): Boolean {
-        val blocked = cache.get(userId)
+        val blocked = cache.get(UserKey(userId, roleId))
         if (blocked === null) {
             return true
         }
@@ -65,7 +70,7 @@ class RevokeTokenService(
 
     override fun putRevoked(userId: Int, roleId: Int, revokeAt: Long): Boolean {
         val dto = RevokeAtDto(userId, revokeAt, roleId)
-        if (cache.put(userId, dto)) {
+        if (cache.put(UserKey(userId, roleId), dto)) {
             return repository.insertOrUpdate(dto)
         }
         return false

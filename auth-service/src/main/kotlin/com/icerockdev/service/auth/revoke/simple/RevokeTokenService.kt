@@ -11,7 +11,7 @@ import com.icerockdev.service.auth.revoke.RevokeAtDto
 import com.icerockdev.service.auth.revoke.TokenNotifyBus
 
 class RevokeTokenService(
-    private val repository: ITokenDataRepository<RevokeAtDto>,
+    private val repository: ITokenDataRepository<Int, RevokeAtDto>,
     configure: Configuration.() -> Unit = {}
 ) : IRevokeTokenService {
 

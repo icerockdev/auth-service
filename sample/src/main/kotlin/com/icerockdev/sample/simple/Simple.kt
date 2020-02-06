@@ -103,7 +103,7 @@ object Simple {
 
 const val AUDIENCE = "audience-simple"
 
-class TokenRepository : ITokenDataRepository<RevokeAtDto> {
+class TokenRepository : ITokenDataRepository<Int, RevokeAtDto> {
 
     override suspend fun getAllNotExpired(): Map<Int, RevokeAtDto> {
         return mapOf(
