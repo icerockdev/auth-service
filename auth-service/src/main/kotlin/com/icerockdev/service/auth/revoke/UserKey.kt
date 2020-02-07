@@ -6,5 +6,5 @@ package com.icerockdev.service.auth.revoke
 
 data class UserKey (
     val userId: Int,
-    val roleId: Int
+    val userType: Int
 )
