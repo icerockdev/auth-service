@@ -7,6 +7,7 @@ package com.icerockdev.sample.rolebased
 import com.icerockdev.sample.simple.TOKEN_TTL
 import com.icerockdev.service.auth.jwt.JwtConfig
 import com.icerockdev.service.auth.jwt.JwtTokenGenerator
+import com.icerockdev.service.auth.jwt.JwtTokens
 import com.icerockdev.service.auth.revoke.*
 import io.ktor.application.ApplicationCallPipeline
 import io.ktor.application.call
@@ -30,8 +31,14 @@ import org.slf4j.event.Level
 object RoleBased {
     private val logger = LoggerFactory.getLogger(RoleBased::class.java)
 
+    private fun JwtTokenGenerator<UserKey>.makeTokens(userId: Int, role: Int): JwtTokens {
+        return makeTokens(UserKey(userId, 10)) {
+            withClaim("role", role)
+        }
+    }
+
     fun main(args: Array<String>): NettyApplicationEngine {
-        val jwtTokenGenerator = JwtTokenGenerator(
+        val jwtTokenGenerator = CustomJwtTokenGenerator(
             JwtConfig(
                 secret = "secret",
                 audience = AUDIENCE,
@@ -75,7 +82,7 @@ object RoleBased {
                 }
                 installAuth(
                     verifier = jwtTokenGenerator.verifier,
-                    audience = com.icerockdev.sample.simple.AUDIENCE,
+                    audience = AUDIENCE,
                     revokeTokenService = revokeTokenService
                 )
 

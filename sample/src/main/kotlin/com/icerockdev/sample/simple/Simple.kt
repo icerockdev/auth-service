@@ -6,6 +6,7 @@ package com.icerockdev.sample.simple
 
 import com.icerockdev.service.auth.jwt.JwtConfig
 import com.icerockdev.service.auth.jwt.JwtTokenGenerator
+import com.icerockdev.service.auth.jwt.JwtTokens
 import com.icerockdev.service.auth.revoke.*
 import com.icerockdev.service.auth.revoke.IRevokeTokenService
 import com.icerockdev.service.auth.revoke.RevokeTokenService
@@ -33,8 +34,14 @@ const val TOKEN_TTL: Long = 3600 * 1000L
 object Simple {
     private val logger = LoggerFactory.getLogger(Simple::class.java)
 
+    private fun JwtTokenGenerator<Int>.makeTokens(userId: Int, role: Int): JwtTokens {
+        return makeTokens(userId) {
+            withClaim("role", role)
+        }
+    }
+
     fun main(args: Array<String>): NettyApplicationEngine {
-        val jwtTokenGenerator = JwtTokenGenerator(
+        val jwtTokenGenerator = CustomJwtTokenGenerator(
             JwtConfig(
                 secret = "secret",
                 audience = AUDIENCE,

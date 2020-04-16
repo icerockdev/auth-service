@@ -1,0 +1,8 @@
+GET http://127.0.0.1:8082
+Content-Type: application/json
+Authorization: Bearer <token>
+
+###
+GET http://127.0.0.1:8083
+Content-Type: application/json
+Authorization: <token>
