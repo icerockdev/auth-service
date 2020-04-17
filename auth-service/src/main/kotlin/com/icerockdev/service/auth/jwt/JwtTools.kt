@@ -4,8 +4,90 @@
 
 package com.icerockdev.service.auth.jwt
 
+import com.auth0.jwt.JWT
+import com.fasterxml.jackson.core.type.TypeReference
+import com.fasterxml.jackson.databind.DeserializationFeature
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.databind.util.StdDateFormat
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
+import com.icerockdev.service.auth.revoke.IRevokeTokenService
 import io.ktor.application.ApplicationCall
 import io.ktor.auth.authentication
+import io.ktor.auth.jwt.JWTCredential
 import io.ktor.auth.jwt.JWTPrincipal
 
+internal val mapper = ObjectMapper().apply {
+    disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+    disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+    dateFormat = StdDateFormat()
+    registerKotlinModule()
+}
+
 fun ApplicationCall.getJwtClaim(name: String) = authentication.principal<JWTPrincipal>()?.payload?.getClaim(name)
+
+fun <T> getObjAsString(obj: T): String {
+    return mapper.writeValueAsString(obj)
+}
+
+fun <T> readObjFromString(string: String?): T? {
+    return try {
+        mapper.readValue(string, object: TypeReference<T>() {})
+    } catch (e: Exception) {
+        null
+    }
+}
+
+inline fun <reified TUserKey: Any> JWTCredential.inArrayValidate(accessList: List<TUserKey>, claimName: String): Boolean {
+    if (accessList.isEmpty()) {
+        return true
+    }
+
+    val role = try {
+        payload.getClaim(claimName).`as`(TUserKey::class.java) ?: return false
+    } catch (e: Exception) {
+        return false
+    }
+
+    if (!accessList.contains(role)) {
+        return false
+    }
+    return true
+}
+
+fun JWTCredential.audienceValidate(audience: String): Boolean {
+    return payload.audience.contains(audience)
+}
+
+fun JWTCredential.userValidate(userClaim: String = "user"): Boolean {
+    return !payload.getClaim(userClaim).isNull
+}
+
+fun <TUserKey : Any> JWTCredential.revokeValidate(
+    revokeTokenService: IRevokeTokenService<TUserKey>,
+    userClaim: String = "user"
+): Boolean {
+    if (payload.issuedAt === null) {
+        return false
+    }
+
+    val userStr = payload.getClaim(userClaim).asString() ?: ""
+    val user = readObjFromString<TUserKey>(userStr) ?: return false
+
+    return revokeTokenService.checkIsActive(user, payload.issuedAt.time)
+}
+
+fun JWTCredential.checkIsAccessToken(typeClaim: String = "type"): Boolean {
+    if (payload.getClaim(typeClaim).asString() == TokenTypes.TOKEN_TYPE_ACCESS.value) {
+        return false
+    }
+    return true
+}
+
+/**
+ * Extract UserKey from Jwt token
+ */
+fun <TUserKey> getUserKey(token: String, userClaim: String = "user"): TUserKey? {
+    val userStr = JWT.decode(token).getClaim(userClaim).asString() ?: return null
+    return readObjFromString(userStr)
+}

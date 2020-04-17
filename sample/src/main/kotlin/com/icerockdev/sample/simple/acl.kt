@@ -5,7 +5,7 @@
 package com.icerockdev.sample.simple
 
 import com.auth0.jwt.JWTVerifier
-import com.icerockdev.service.auth.acl.*
+import com.icerockdev.service.auth.jwt.*
 import com.icerockdev.service.auth.revoke.IRevokeTokenService
 import io.ktor.application.Application
 import io.ktor.application.install
@@ -33,15 +33,15 @@ fun Application.installAuth(
                 return@validate null
             }
 
-            if (!credential.intRoleValidate(roleListAccess)) {
+            if (!credential.inArrayValidate(roleListAccess, "role")) {
+                return@validate null
+            }
+
+            if (!credential.userValidate()) {
                 return@validate null
             }
 
             if (!credential.revokeValidate(revokeTokenService)) {
-                return@validate null
-            }
-
-            if (!credential.userIdValidate()) {
                 return@validate null
             }
 

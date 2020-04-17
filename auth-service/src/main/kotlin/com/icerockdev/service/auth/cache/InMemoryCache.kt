@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.CoroutineContext
 
-class InMemoryCache<K : Any, V : Any>(
+internal class InMemoryCache<K : Any, V : Any>(
     private val hook: IMemoryCacheHook<K, V>,
     private val capacity: Int = 1000,
     private val cleanUpIntervalMillis: Long = 3600L

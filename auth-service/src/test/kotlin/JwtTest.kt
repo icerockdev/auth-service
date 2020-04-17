@@ -10,7 +10,7 @@ class JwtTest {
 
     @Test
     fun testJwt() {
-        val jwtTokenGenerator = JwtTokenGenerator(
+        val jwtTokenGenerator = JwtTokenGenerator<Int>(
             JwtConfig(
                 secret = "secret",
                 audience = "audience",

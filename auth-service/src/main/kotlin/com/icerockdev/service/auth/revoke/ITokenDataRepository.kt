@@ -4,8 +4,8 @@
 
 package com.icerockdev.service.auth.revoke
 
-interface ITokenDataRepository<T: Any> {
-    suspend fun getAllNotExpired(): Map<T, Long>
-    fun insertOrUpdate(key: T, revokeAt: Long): Boolean
+interface ITokenDataRepository<TUserKey: Any> {
+    suspend fun getAllNotExpired(): Map<TUserKey, Long>
+    fun insertOrUpdate(key: TUserKey, revokeAt: Long): Boolean
     fun cleanUp()
 }

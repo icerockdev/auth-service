@@ -5,9 +5,8 @@
 package com.icerockdev.sample.rolebased
 
 import com.auth0.jwt.JWTVerifier
-import com.icerockdev.service.auth.acl.*
+import com.icerockdev.service.auth.jwt.*
 import com.icerockdev.service.auth.revoke.IRevokeTokenService
-import com.icerockdev.service.auth.revoke.UserKey
 import io.ktor.application.Application
 import io.ktor.application.install
 import io.ktor.auth.Authentication
@@ -15,10 +14,10 @@ import io.ktor.auth.jwt.JWTAuthenticationProvider
 import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.auth.jwt.jwt
 
-fun Application.installAuth(
+fun <TUserKey: Any> Application.installAuth(
     verifier: JWTVerifier,
     audience: String,
-    revokeTokenService: IRevokeTokenService<UserKey>
+    revokeTokenService: IRevokeTokenService<TUserKey>
 ) {
 
     fun JWTAuthenticationProvider.Configuration.accessVerify(
@@ -34,15 +33,15 @@ fun Application.installAuth(
                 return@validate null
             }
 
-            if (!credential.intRoleValidate(roleListAccess)) {
+            if (!credential.inArrayValidate(roleListAccess, "role")) {
+                return@validate null
+            }
+
+            if (!credential.userValidate()) {
                 return@validate null
             }
 
             if (!credential.revokeValidate(revokeTokenService)) {
-                return@validate null
-            }
-
-            if (!credential.userIdValidate()) {
                 return@validate null
             }
 

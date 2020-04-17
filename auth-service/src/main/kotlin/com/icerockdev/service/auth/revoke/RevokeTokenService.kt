@@ -7,10 +7,10 @@ package com.icerockdev.service.auth.revoke
 import com.icerockdev.service.auth.cache.IMemoryCacheHook
 import com.icerockdev.service.auth.cache.InMemoryCache
 
-class RevokeTokenService<T : Any>(
-    private val repository: ITokenDataRepository<T>,
-    configure: Configuration<T>.() -> Unit = {}
-) : IRevokeTokenService<T> {
+class RevokeTokenService<TUserKey : Any>(
+    private val repository: ITokenDataRepository<TUserKey>,
+    configure: Configuration<TUserKey>.() -> Unit = {}
+) : IRevokeTokenService<TUserKey> {
 
     open class Configuration<T : Any> {
         /**
@@ -21,21 +21,21 @@ class RevokeTokenService<T : Any>(
         var notifier: TokenNotifyBus<T>? = null
     }
 
-    private val cache: InMemoryCache<T, Long>
+    private val cache: InMemoryCache<TUserKey, Long>
 
     init {
         val configuration =
-            Configuration<T>()
+            Configuration<TUserKey>()
         configuration.configure()
 
         cache = InMemoryCache(
             capacity = configuration.cacheCapacity,
-            hook = object : IMemoryCacheHook<T, Long> {
-                override suspend fun loader(): Map<T, Long> {
+            hook = object : IMemoryCacheHook<TUserKey, Long> {
+                override suspend fun loader(): Map<TUserKey, Long> {
                     return repository.getAllNotExpired()
                 }
 
-                override fun isExpired(now: Long, key: T, value: Long): Boolean {
+                override fun isExpired(now: Long, key: TUserKey, value: Long): Boolean {
                     return value < now - configuration.tokenTtl
                 }
 
@@ -53,7 +53,7 @@ class RevokeTokenService<T : Any>(
         }
     }
 
-    override fun checkIsActive(key: T, issuedAt: Long): Boolean {
+    override fun checkIsActive(key: TUserKey, issuedAt: Long): Boolean {
         val revokeAt = cache.get(key)
         if (revokeAt === null) {
             return true
@@ -62,7 +62,7 @@ class RevokeTokenService<T : Any>(
         return revokeAt <= issuedAt
     }
 
-    override fun putRevoked(key: T, revokeAt: Long): Boolean {
+    override fun putRevoked(key: TUserKey, revokeAt: Long): Boolean {
         if (cache.put(key, revokeAt)) {
             return repository.insertOrUpdate(key, revokeAt)
         }

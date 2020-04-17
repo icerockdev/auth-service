@@ -13,7 +13,7 @@ apply(plugin = "java")
 apply(plugin = "kotlin")
 
 group = "com.icerockdev.service"
-version = "0.0.4"
+version = "0.1.0"
 
 val sourcesJar by tasks.registering(Jar::class) {
     classifier = "sources"
@@ -23,7 +23,8 @@ val sourcesJar by tasks.registering(Jar::class) {
 dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${properties["coroutines_version"]}")
     // Ktor jwt
-    implementation("io.ktor:ktor-auth-jwt:${properties["ktor_version"]}")
+    api("io.ktor:ktor-auth-jwt:${properties["ktor_version"]}")
+    implementation("io.ktor:ktor-jackson:${properties["ktor_version"]}")
 
     // logging
     implementation("ch.qos.logback:logback-classic:${properties["logback_version"]}")
