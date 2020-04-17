@@ -4,6 +4,7 @@
 
 package com.icerockdev.service.auth.jwt
 
+import com.auth0.jwt.JWT
 import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
@@ -81,4 +82,12 @@ fun JWTCredential.checkIsAccessToken(typeClaim: String = "type"): Boolean {
         return false
     }
     return true
+}
+
+/**
+ * Extract UserKey from Jwt token
+ */
+fun <TUserKey> getUserKey(token: String, userClaim: String = "user"): TUserKey? {
+    val userStr = JWT.decode(token).getClaim(userClaim).asString() ?: return null
+    return readObjFromString(userStr)
 }
