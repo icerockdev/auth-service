@@ -91,3 +91,11 @@ fun <TUserKey> getUserKey(token: String, userClaim: String = "user"): TUserKey? 
     val userStr = JWT.decode(token).getClaim(userClaim).asString() ?: return null
     return readObjFromString(userStr)
 }
+
+fun <TUserKey> JWTCredential.getUserKey(userClaim: String = "user"): TUserKey? {
+    return readObjFromString(payload.getClaim(userClaim).asString())
+}
+
+fun <TUserKey> ApplicationCall.getJwtUserKey(userClaim: String = "user"): TUserKey? {
+    return readObjFromString(authentication.principal<JWTPrincipal>()?.payload?.getClaim(userClaim)?.asString())
+}
