@@ -69,7 +69,7 @@ class RevokeTokenService<TUserKey : Any>(
         return false
     }
 
-    override fun getAll(): List<Long> {
-        return cache.getAll()
+    override fun getAll(): Map<TUserKey, Long> {
+        return cache.getMap()
     }
 }

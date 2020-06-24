@@ -69,6 +69,15 @@ internal class InMemoryCache<K : Any, V : Any>(
     }
 
     @Throws(CacheUnavailableException::class)
+    fun getMap(): Map<K, V> {
+        if (!isLoaded) {
+            throw CacheUnavailableException()
+        }
+        val now = System.currentTimeMillis()
+        return cache.filter { !hook.isExpired(now, it.key, it.value) }.toMap()
+    }
+
+    @Throws(CacheUnavailableException::class)
     fun remove(key: K): V? {
         if (!isLoaded) {
             throw CacheUnavailableException()
