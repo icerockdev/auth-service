@@ -31,6 +31,8 @@ dependencies {
 
     // tests
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${properties["kotlin_version"]}")
+    testImplementation("io.ktor:ktor-server-test-host:${properties["ktor_version"]}")
+    testImplementation("io.ktor:ktor-server-core:${properties["ktor_version"]}")
 }
 
 java {

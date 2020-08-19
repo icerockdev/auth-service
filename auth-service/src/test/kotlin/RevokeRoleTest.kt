@@ -1,7 +1,11 @@
 /*
  * Copyright 2020 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
  */
-import com.icerockdev.service.auth.revoke.*
+import com.icerockdev.service.auth.revoke.IRevokeTokenService
+import com.icerockdev.service.auth.revoke.ITokenDataRepository
+import com.icerockdev.service.auth.revoke.RevokeTokenService
+import com.icerockdev.service.auth.revoke.TokenNotifyBus
+import com.icerockdev.service.auth.revoke.UserKey
 import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue

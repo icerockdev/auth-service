@@ -6,9 +6,11 @@ package com.icerockdev.sample.rolebased
 
 import com.icerockdev.sample.simple.TOKEN_TTL
 import com.icerockdev.service.auth.jwt.JwtConfig
-import com.icerockdev.service.auth.jwt.JwtTokenGenerator
-import com.icerockdev.service.auth.jwt.JwtTokens
-import com.icerockdev.service.auth.revoke.*
+import com.icerockdev.service.auth.revoke.IRevokeTokenService
+import com.icerockdev.service.auth.revoke.ITokenDataRepository
+import com.icerockdev.service.auth.revoke.RevokeTokenService
+import com.icerockdev.service.auth.revoke.TokenNotifyBus
+import com.icerockdev.service.auth.revoke.UserKey
 import io.ktor.application.ApplicationCallPipeline
 import io.ktor.application.call
 import io.ktor.application.install
@@ -30,12 +32,6 @@ import org.slf4j.event.Level
 
 object RoleBased {
     private val logger = LoggerFactory.getLogger(RoleBased::class.java)
-
-    private fun JwtTokenGenerator<UserKey>.makeTokens(userId: Int, role: Int): JwtTokens {
-        return makeTokens(UserKey(userId, 10)) {
-            withClaim("role", role)
-        }
-    }
 
     fun main(args: Array<String>): NettyApplicationEngine {
         val jwtTokenGenerator = CustomJwtTokenGenerator(
@@ -110,7 +106,7 @@ class TokenRepository : ITokenDataRepository<UserKey> {
 
     override suspend fun getAllNotExpired(): Map<UserKey, Long> {
         return mapOf(
-            UserKey(2, 1) to System.currentTimeMillis() - TOKEN_TTL
+            UserKey(2, ROLE_ADMIN) to System.currentTimeMillis() + TOKEN_TTL
         )
     }
 
