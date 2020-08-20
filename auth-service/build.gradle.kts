@@ -13,7 +13,7 @@ apply(plugin = "java")
 apply(plugin = "kotlin")
 
 group = "com.icerockdev.service"
-version = "0.2.0"
+version = "0.3.0"
 
 val sourcesJar by tasks.registering(Jar::class) {
     classifier = "sources"
@@ -31,6 +31,8 @@ dependencies {
 
     // tests
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:${properties["kotlin_version"]}")
+    testImplementation("io.ktor:ktor-server-test-host:${properties["ktor_version"]}")
+    testImplementation("io.ktor:ktor-server-core:${properties["ktor_version"]}")
 }
 
 java {

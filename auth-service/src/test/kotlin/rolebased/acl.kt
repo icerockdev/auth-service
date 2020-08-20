@@ -2,10 +2,14 @@
  * Copyright 2020 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
  */
 
-package com.icerockdev.sample.simple
+package rolebased
 
 import com.auth0.jwt.JWTVerifier
-import com.icerockdev.service.auth.jwt.*
+import com.icerockdev.service.auth.jwt.audienceValidate
+import com.icerockdev.service.auth.jwt.checkIsAccessToken
+import com.icerockdev.service.auth.jwt.inArrayValidate
+import com.icerockdev.service.auth.jwt.revokeValidate
+import com.icerockdev.service.auth.jwt.userValidate
 import com.icerockdev.service.auth.revoke.IRevokeTokenService
 import io.ktor.application.Application
 import io.ktor.application.install
@@ -14,10 +18,11 @@ import io.ktor.auth.jwt.JWTAuthenticationProvider
 import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.auth.jwt.jwt
 
-fun Application.installAuth(
+fun <TUserKey: Any> Application.installAuth(
+    userKeyClass: Class<TUserKey>,
     verifier: JWTVerifier,
     audience: String,
-    revokeTokenService: IRevokeTokenService<Int>
+    revokeTokenService: IRevokeTokenService<TUserKey>
 ) {
 
     fun JWTAuthenticationProvider.Configuration.accessVerify(
@@ -41,7 +46,7 @@ fun Application.installAuth(
                 return@validate null
             }
 
-            if (!credential.revokeValidate(revokeTokenService)) {
+            if (!credential.revokeValidate(userKeyClass, revokeTokenService)) {
                 return@validate null
             }
 
@@ -63,3 +68,6 @@ fun Application.installAuth(
 
 const val ACCESS_ADMIN_ONLY = "admin"
 const val ROLE_ADMIN = 10
+const val ROLE_OTHER = 20
+
+const val USER_TYPE = 1
