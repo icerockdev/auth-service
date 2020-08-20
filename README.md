@@ -8,7 +8,7 @@ repositories {
 }
 
 // Append dependency
-implementation("com.icerockdev.service:auth-service:0.2.0")
+implementation("com.icerockdev.service:auth-service:0.3.0")
 ````
 
 ## Library usage
@@ -18,7 +18,7 @@ Lib include tools for:
  - Support persist storage for blacklist by ITokenDataRepository
  - Support event listener for new records in blacklist by IRevokeTokenService and RevokeTokenService impl (Event bus - TokenNotifyBus)
  
-Full example you can see at sample module
+Sample of usage you can see at RoleBasedTest and SimpleBasedTest
  
 ## Contributing
 All development (both new features and bug fixes) is performed in the `develop` branch. This way `master` always contains the sources of the most recently released version. Please send PRs with bug fixes to the `develop` branch. Documentation fixes in the markdown files are an exception to this rule. They are updated directly in `master`.
