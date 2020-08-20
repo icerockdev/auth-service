@@ -46,8 +46,8 @@ fun <T> readObjFromString(string: String?, typeRef: TypeReference<T>): T? {
     }
 }
 
-inline fun <reified TUserKey : Any> JWTCredential.inArrayValidate(
-    accessList: List<TUserKey>,
+inline fun <reified T : Any> JWTCredential.inArrayValidate(
+    accessList: List<T>,
     claimName: String
 ): Boolean {
     if (accessList.isEmpty()) {
@@ -55,7 +55,7 @@ inline fun <reified TUserKey : Any> JWTCredential.inArrayValidate(
     }
 
     val role = try {
-        payload.getClaim(claimName).`as`(TUserKey::class.java) ?: return false
+        payload.getClaim(claimName).`as`(T::class.java) ?: return false
     } catch (e: Exception) {
         return false
     }
