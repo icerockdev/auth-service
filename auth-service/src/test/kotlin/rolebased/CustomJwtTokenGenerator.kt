@@ -11,7 +11,7 @@ import com.icerockdev.service.auth.revoke.UserKey
 
 class CustomJwtTokenGenerator(config: JwtConfig): JwtTokenGenerator<UserKey>(config) {
     fun makeTokens(userId: Int, role: Int): JwtTokens {
-        return makeTokens(UserKey(userId, 1)) {
+        return makeTokens(UserKey(userId, USER_TYPE)) {
             withClaim("role", role)
         }
     }

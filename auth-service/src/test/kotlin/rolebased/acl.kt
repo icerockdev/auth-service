@@ -69,3 +69,5 @@ fun <TUserKey: Any> Application.installAuth(
 const val ACCESS_ADMIN_ONLY = "admin"
 const val ROLE_ADMIN = 10
 const val ROLE_OTHER = 20
+
+const val USER_TYPE = 1

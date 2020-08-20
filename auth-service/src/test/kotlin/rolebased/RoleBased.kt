@@ -60,7 +60,7 @@ class TokenRepository : ITokenDataRepository<UserKey> {
 
     override suspend fun getAllNotExpired(): Map<UserKey, Long> {
         return mapOf(
-            UserKey(2, ROLE_ADMIN) to System.currentTimeMillis() + TOKEN_TTL
+            UserKey(2, USER_TYPE) to System.currentTimeMillis() + TOKEN_TTL
         )
     }
 
