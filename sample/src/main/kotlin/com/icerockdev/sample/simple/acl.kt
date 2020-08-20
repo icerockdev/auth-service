@@ -5,7 +5,11 @@
 package com.icerockdev.sample.simple
 
 import com.auth0.jwt.JWTVerifier
-import com.icerockdev.service.auth.jwt.*
+import com.icerockdev.service.auth.jwt.audienceValidate
+import com.icerockdev.service.auth.jwt.checkIsAccessToken
+import com.icerockdev.service.auth.jwt.inArrayValidate
+import com.icerockdev.service.auth.jwt.revokeValidate
+import com.icerockdev.service.auth.jwt.userValidate
 import com.icerockdev.service.auth.revoke.IRevokeTokenService
 import io.ktor.application.Application
 import io.ktor.application.install
@@ -41,7 +45,7 @@ fun Application.installAuth(
                 return@validate null
             }
 
-            if (!credential.revokeValidate(revokeTokenService)) {
+            if (!credential.revokeValidate(Int::class.java, revokeTokenService)) {
                 return@validate null
             }
 

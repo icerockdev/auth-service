@@ -77,6 +77,7 @@ object RoleBased {
                     level = Level.TRACE
                 }
                 installAuth(
+                    userKeyClass = UserKey::class.java,
                     verifier = jwtTokenGenerator.verifier,
                     audience = AUDIENCE,
                     revokeTokenService = revokeTokenService

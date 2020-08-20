@@ -19,6 +19,7 @@ import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.auth.jwt.jwt
 
 fun <TUserKey: Any> Application.installAuth(
+    userKeyClass: Class<TUserKey>,
     verifier: JWTVerifier,
     audience: String,
     revokeTokenService: IRevokeTokenService<TUserKey>
@@ -45,7 +46,7 @@ fun <TUserKey: Any> Application.installAuth(
                 return@validate null
             }
 
-            if (!credential.revokeValidate(revokeTokenService)) {
+            if (!credential.revokeValidate(userKeyClass, revokeTokenService)) {
                 return@validate null
             }
 

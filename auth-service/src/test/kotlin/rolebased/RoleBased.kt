@@ -41,6 +41,7 @@ fun Application.roleBasedModule() {
     }
 
     installAuth(
+        userKeyClass = UserKey::class.java,
         verifier = jwtTokenGenerator.verifier,
         audience = AUDIENCE,
         revokeTokenService = revokeTokenService
@@ -59,7 +60,7 @@ class TokenRepository : ITokenDataRepository<UserKey> {
 
     override suspend fun getAllNotExpired(): Map<UserKey, Long> {
         return mapOf(
-            UserKey(2, ROLE_ADMIN) to System.currentTimeMillis() - TOKEN_TTL
+            UserKey(2, ROLE_ADMIN) to System.currentTimeMillis() + TOKEN_TTL
         )
     }
 

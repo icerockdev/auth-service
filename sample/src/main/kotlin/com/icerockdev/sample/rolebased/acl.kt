@@ -5,7 +5,11 @@
 package com.icerockdev.sample.rolebased
 
 import com.auth0.jwt.JWTVerifier
-import com.icerockdev.service.auth.jwt.*
+import com.icerockdev.service.auth.jwt.audienceValidate
+import com.icerockdev.service.auth.jwt.checkIsAccessToken
+import com.icerockdev.service.auth.jwt.inArrayValidate
+import com.icerockdev.service.auth.jwt.revokeValidate
+import com.icerockdev.service.auth.jwt.userValidate
 import com.icerockdev.service.auth.revoke.IRevokeTokenService
 import io.ktor.application.Application
 import io.ktor.application.install
@@ -15,6 +19,7 @@ import io.ktor.auth.jwt.JWTPrincipal
 import io.ktor.auth.jwt.jwt
 
 fun <TUserKey: Any> Application.installAuth(
+    userKeyClass: Class<TUserKey>,
     verifier: JWTVerifier,
     audience: String,
     revokeTokenService: IRevokeTokenService<TUserKey>
@@ -41,7 +46,7 @@ fun <TUserKey: Any> Application.installAuth(
                 return@validate null
             }
 
-            if (!credential.revokeValidate(revokeTokenService)) {
+            if (!credential.revokeValidate(userKeyClass, revokeTokenService)) {
                 return@validate null
             }
 
