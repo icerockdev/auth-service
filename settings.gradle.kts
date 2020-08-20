@@ -27,12 +27,6 @@ pluginManagement {
 }
 
 include(":auth-service")
-//
-val properties = startParameter.projectProperties
 
 // ./gradlew -PlibraryPublish publishToMavenLocal
-// ./gradlew -DBINTRAY_USER=user -DBINTRAY_KEY=key -PlibraryPublish :auth-service:publish
-val libraryPublish: Boolean = properties.containsKey("libraryPublish")
-if(!libraryPublish) {
-    include(":sample")
-}
+// ./gradlew -DBINTRAY_USER=user -DBINTRAY_KEY=key :auth-service:publish

@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.util.StdDateFormat
-import com.fasterxml.jackson.module.kotlin.jacksonTypeRef
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.icerockdev.service.auth.revoke.IRevokeTokenService
 import io.ktor.application.ApplicationCall
@@ -18,7 +17,7 @@ import io.ktor.auth.authentication
 import io.ktor.auth.jwt.JWTCredential
 import io.ktor.auth.jwt.JWTPrincipal
 
-internal val mapper = ObjectMapper().apply {
+private val mapper = ObjectMapper().apply {
     disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
     disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
     dateFormat = StdDateFormat()
@@ -102,16 +101,16 @@ fun JWTCredential.checkIsAccessToken(typeClaim: String = "type"): Boolean {
  */
 inline fun <reified TUserKey> getUserKey(token: String, userClaim: String = "user"): TUserKey? {
     val userStr = JWT.decode(token).getClaim(userClaim).asString() ?: return null
-    return readObjFromString(userStr, jacksonTypeRef<TUserKey>())
+    return readObjFromString(userStr, TUserKey::class.java)
 }
 
 inline fun <reified TUserKey> JWTCredential.getUserKey(userClaim: String = "user"): TUserKey? {
-    return readObjFromString(payload.getClaim(userClaim).asString(), jacksonTypeRef<TUserKey>())
+    return readObjFromString(payload.getClaim(userClaim).asString(), TUserKey::class.java)
 }
 
 inline fun <reified TUserKey> ApplicationCall.getJwtUserKey(userClaim: String = "user"): TUserKey? {
     return readObjFromString(
         authentication.principal<JWTPrincipal>()?.payload?.getClaim(userClaim)?.asString(),
-        jacksonTypeRef<TUserKey>()
+        TUserKey::class.java
     )
 }

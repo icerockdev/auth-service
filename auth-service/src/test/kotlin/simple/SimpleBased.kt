@@ -2,14 +2,13 @@
  * Copyright 2020 IceRock MAG Inc. Use of this source code is governed by the Apache 2.0 license.
  */
 
-package rolebased
+package simple
 
 import com.icerockdev.service.auth.jwt.JwtConfig
 import com.icerockdev.service.auth.revoke.IRevokeTokenService
 import com.icerockdev.service.auth.revoke.ITokenDataRepository
 import com.icerockdev.service.auth.revoke.RevokeTokenService
 import com.icerockdev.service.auth.revoke.TokenNotifyBus
-import com.icerockdev.service.auth.revoke.UserKey
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.auth.authenticate
@@ -18,8 +17,8 @@ import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.routing
 
-private const val TOKEN_TTL = 3600 * 1000L
-const val AUDIENCE = "audience-rolebased"
+const val TOKEN_TTL: Long = 3600 * 1000L
+private const val AUDIENCE = "audience-simple"
 
 val jwtTokenGenerator = CustomJwtTokenGenerator(
     JwtConfig(
@@ -31,9 +30,9 @@ val jwtTokenGenerator = CustomJwtTokenGenerator(
     )
 )
 
-fun Application.roleBasedModule() {
-    val notifier = TokenNotifyBus<UserKey>()
-    val revokeTokenService: IRevokeTokenService<UserKey> = RevokeTokenService(
+fun Application.simpleBasedModule() {
+    val notifier = TokenNotifyBus<Int>()
+    val revokeTokenService: IRevokeTokenService<Int> = RevokeTokenService(
         TokenRepository()
     ) {
         this.tokenTtl = TOKEN_TTL
@@ -41,7 +40,6 @@ fun Application.roleBasedModule() {
     }
 
     installAuth(
-        userKeyClass = UserKey::class.java,
         verifier = jwtTokenGenerator.verifier,
         audience = AUDIENCE,
         revokeTokenService = revokeTokenService
@@ -56,15 +54,15 @@ fun Application.roleBasedModule() {
     }
 }
 
-class TokenRepository : ITokenDataRepository<UserKey> {
+class TokenRepository : ITokenDataRepository<Int> {
 
-    override suspend fun getAllNotExpired(): Map<UserKey, Long> {
+    override suspend fun getAllNotExpired(): Map<Int, Long> {
         return mapOf(
-            UserKey(2, USER_TYPE) to System.currentTimeMillis() + TOKEN_TTL
+            2 to System.currentTimeMillis() + TOKEN_TTL
         )
     }
 
-    override fun insertOrUpdate(key: UserKey, revokeAt: Long): Boolean {
+    override fun insertOrUpdate(key: Int, revokeAt: Long): Boolean {
         return true
     }
 

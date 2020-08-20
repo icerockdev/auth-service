@@ -4,7 +4,9 @@
 
 import com.icerockdev.service.auth.jwt.JwtConfig
 import com.icerockdev.service.auth.jwt.JwtTokenGenerator
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
 
 class JwtTest {
 

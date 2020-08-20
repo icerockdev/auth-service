@@ -12,7 +12,7 @@ import kotlin.test.assertTrue
 
 class RevokeRoleTest {
     companion object {
-        val TOKEN_TTL: Long = 3600 * 1000L
+        const val TOKEN_TTL: Long = 3600 * 1000L
         val now = System.currentTimeMillis()
     }
 
