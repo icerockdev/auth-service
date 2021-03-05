@@ -8,7 +8,7 @@ repositories {
 }
 
 // Append dependency
-implementation("com.icerockdev.service:auth-service:0.3.0")
+implementation("com.icerockdev.service:auth-service:0.4.0")
 ````
 
 ## Library usage
