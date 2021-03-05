@@ -47,7 +47,7 @@ fun Application.simpleBasedModule() {
 
     routing {
         authenticate(ACCESS_ADMIN_ONLY) {
-            get("/") {
+            get("") {
                 call.respondText("Hello, world!", ContentType.Text.Html)
             }
         }
