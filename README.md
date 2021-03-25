@@ -4,11 +4,11 @@
 ````kotlin
 // Append repository
 repositories {
-    maven { url = url("https://dl.bintray.com/icerockdev/backend") }
+    mavenCentral()
 }
 
 // Append dependency
-implementation("com.icerockdev.service:auth-service:0.4.0")
+implementation("com.icerockdev.service:auth-service:0.4.1")
 ````
 
 ## Library usage
