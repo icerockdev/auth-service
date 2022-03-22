@@ -14,7 +14,6 @@ import rolebased.ROLE_OTHER
 import rolebased.jwtTokenGenerator
 import rolebased.roleBasedModule
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class RoleBasedTest {
 
@@ -26,7 +25,6 @@ class RoleBasedTest {
         }
 
         req.run {
-            assertTrue { requestHandled }
             assertEquals(HttpStatusCode.OK, response.status())
         }
     }
@@ -39,7 +37,6 @@ class RoleBasedTest {
         }
 
         req.run {
-            assertTrue { requestHandled }
             assertEquals(HttpStatusCode.Unauthorized, response.status())
         }
     }
@@ -52,7 +49,6 @@ class RoleBasedTest {
         }
 
         req.run {
-            assertTrue { requestHandled }
             assertEquals(HttpStatusCode.Unauthorized, response.status())
         }
     }

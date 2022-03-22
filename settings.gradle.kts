@@ -5,13 +5,11 @@ pluginManagement {
     repositories {
         mavenLocal()
         gradlePluginPortal()
-        jcenter()
         google()
         maven { // The google mirror is less flaky than mavenCentral()
             url = uri("https://maven-central.storage-download.googleapis.com/repos/central/data/")
         }
         maven { url = uri ("https://plugins.gradle.org/m2/") }
-        maven { url = uri ("https://dl.bintray.com/kotlin/kotlin") }
     }
 
     resolutionStrategy {
@@ -29,4 +27,4 @@ pluginManagement {
 include(":auth-service")
 
 // ./gradlew -PlibraryPublish publishToMavenLocal
-// ./gradlew -DBINTRAY_USER=user -DBINTRAY_KEY=key :auth-service:publish
+// ./gradlew -PlibraryPublish :auth-service:publish
