@@ -14,7 +14,6 @@ import simple.ROLE_OTHER
 import simple.jwtTokenGenerator
 import simple.simpleBasedModule
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class SimpleBasedTest {
 
@@ -26,7 +25,6 @@ class SimpleBasedTest {
         }
 
         req.run {
-            assertTrue { requestHandled }
             assertEquals(HttpStatusCode.OK, response.status())
         }
     }
@@ -39,7 +37,6 @@ class SimpleBasedTest {
         }
 
         req.run {
-            assertTrue { requestHandled }
             assertEquals(HttpStatusCode.Unauthorized, response.status())
         }
     }
@@ -52,7 +49,6 @@ class SimpleBasedTest {
         }
 
         req.run {
-            assertTrue { requestHandled }
             assertEquals(HttpStatusCode.Unauthorized, response.status())
         }
     }
