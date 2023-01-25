@@ -11,12 +11,12 @@ import com.icerockdev.service.auth.jwt.inArrayValidate
 import com.icerockdev.service.auth.jwt.revokeValidate
 import com.icerockdev.service.auth.jwt.userValidate
 import com.icerockdev.service.auth.revoke.IRevokeTokenService
-import io.ktor.application.Application
-import io.ktor.application.install
-import io.ktor.auth.Authentication
-import io.ktor.auth.jwt.JWTAuthenticationProvider
-import io.ktor.auth.jwt.JWTPrincipal
-import io.ktor.auth.jwt.jwt
+import io.ktor.server.application.Application
+import io.ktor.server.application.install
+import io.ktor.server.auth.Authentication
+import io.ktor.server.auth.jwt.JWTAuthenticationProvider
+import io.ktor.server.auth.jwt.JWTPrincipal
+import io.ktor.server.auth.jwt.jwt
 
 fun Application.installAuth(
     verifier: JWTVerifier,
@@ -24,7 +24,7 @@ fun Application.installAuth(
     revokeTokenService: IRevokeTokenService<Int>
 ) {
 
-    fun JWTAuthenticationProvider.Configuration.accessVerify(
+    fun JWTAuthenticationProvider.Config.accessVerify(
         roleListAccess: List<Int> = emptyList()
     ) {
         verifier(verifier)

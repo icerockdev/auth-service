@@ -12,10 +12,10 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import com.fasterxml.jackson.databind.util.StdDateFormat
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.icerockdev.service.auth.revoke.IRevokeTokenService
-import io.ktor.application.ApplicationCall
-import io.ktor.auth.authentication
-import io.ktor.auth.jwt.JWTCredential
-import io.ktor.auth.jwt.JWTPrincipal
+import io.ktor.server.application.ApplicationCall
+import io.ktor.server.auth.authentication
+import io.ktor.server.auth.jwt.JWTCredential
+import io.ktor.server.auth.jwt.JWTPrincipal
 
 private val mapper = ObjectMapper().apply {
     disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)

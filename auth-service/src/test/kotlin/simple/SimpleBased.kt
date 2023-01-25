@@ -9,13 +9,13 @@ import com.icerockdev.service.auth.revoke.IRevokeTokenService
 import com.icerockdev.service.auth.revoke.ITokenDataRepository
 import com.icerockdev.service.auth.revoke.RevokeTokenService
 import com.icerockdev.service.auth.revoke.TokenNotifyBus
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.auth.authenticate
 import io.ktor.http.ContentType
-import io.ktor.response.respondText
-import io.ktor.routing.get
-import io.ktor.routing.routing
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.auth.authenticate
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
 
 const val TOKEN_TTL: Long = 3600 * 1000L
 private const val AUDIENCE = "audience-simple"
@@ -67,6 +67,6 @@ class TokenRepository : ITokenDataRepository<Int> {
     }
 
     override fun cleanUp() {
-
+        // Not implemented
     }
 }
