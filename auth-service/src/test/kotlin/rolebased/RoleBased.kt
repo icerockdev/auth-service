@@ -10,13 +10,13 @@ import com.icerockdev.service.auth.revoke.ITokenDataRepository
 import com.icerockdev.service.auth.revoke.RevokeTokenService
 import com.icerockdev.service.auth.revoke.TokenNotifyBus
 import com.icerockdev.service.auth.revoke.UserKey
-import io.ktor.application.Application
-import io.ktor.application.call
-import io.ktor.auth.authenticate
 import io.ktor.http.ContentType
-import io.ktor.response.respondText
-import io.ktor.routing.get
-import io.ktor.routing.routing
+import io.ktor.server.application.Application
+import io.ktor.server.application.call
+import io.ktor.server.auth.authenticate
+import io.ktor.server.response.respondText
+import io.ktor.server.routing.get
+import io.ktor.server.routing.routing
 
 private const val TOKEN_TTL = 3600 * 1000L
 const val AUDIENCE = "audience-rolebased"
@@ -69,6 +69,6 @@ class TokenRepository : ITokenDataRepository<UserKey> {
     }
 
     override fun cleanUp() {
-
+        // Not implemented
     }
 }
